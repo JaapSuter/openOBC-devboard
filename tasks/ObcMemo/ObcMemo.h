@@ -30,7 +30,7 @@
 
 namespace ObcMemoState
 {
-	enum state {Voltage, FreeMem, Accelerometer};
+	enum state {Voltage, FreeMem, Accelerometer, Wisdom};
 }
 
 class ObcMemo : public ObcUITask
@@ -48,6 +48,9 @@ public:
 	
 private:
 	ObcMemoState::state state;
+	int wisdomQuoteIdx;
+	int wisdomQuoteOffset;
+	int wisdomQuoteOffsetEvery;
 };
 
 #endif // OBCMEMO_H

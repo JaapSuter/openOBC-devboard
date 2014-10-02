@@ -50,7 +50,6 @@ public:
 	void setMonth(uint8_t month);
 	void setYear(uint16_t year);
 
-private:
 	RTC_TIME_Type time;
 };
 

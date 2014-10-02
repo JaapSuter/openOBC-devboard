@@ -45,11 +45,11 @@ void ObcKmmls::runTask()
 {
 	ObcUIMeasurementSystem::system measurementSystem = obc.ui->getMeasurementSystem();
 	if(measurementSystem == ObcUIMeasurementSystem::Metric)
-		setDisplay("metric");
+		setDisplay("Metric (Smart)");
 	else if(measurementSystem == ObcUIMeasurementSystem::Imperial)
-		setDisplay("imperial");
+		setDisplay("Imperial (Dumb)");
 	else if(measurementSystem == ObcUIMeasurementSystem::Both)
-		setDisplay("metric / imperial");
+		setDisplay("Both (Canadian)");
 }
 
 void ObcKmmls::buttonHandler(ObcUITaskFocus::type focus, uint32_t buttonMask)

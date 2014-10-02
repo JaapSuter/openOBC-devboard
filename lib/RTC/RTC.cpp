@@ -43,6 +43,8 @@ RTC::RTC()
 	RTC_CalibConfig(LPC_RTC, 9000, RTC_CALIB_DIR_FORWARD);
 	//leave calibration disabled
 	RTC_CalibCounterCmd(LPC_RTC, DISABLE);
+	
+	RTC_GetFullTime(LPC_RTC, &time);
 }
 
 //TODO utc, timezone, dst

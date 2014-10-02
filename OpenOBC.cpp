@@ -249,6 +249,8 @@ OpenOBC::OpenOBC() : displayMode(reinterpret_cast<volatile DisplayMode_Type&>(LP
 	keypadLight = new IO(KEYPAD_BACKLIGHT_PORT, KEYPAD_BACKLIGHT_PIN, true);
 // 	lcdBacklight = new PWM(LCD_BACKLIGHT_PORT, LCD_BACKLIGHT_PIN, .2);
 // 	clockBacklight = new PWM(CLOCK_BACKLIGHT_PORT, CLOCK_BACKLIGHT_PIN);
+// 	
+
 
 	printf("openOBC firmware version: %s\r\n", GIT_VERSION);
 
@@ -271,12 +273,43 @@ OpenOBC::OpenOBC() : displayMode(reinterpret_cast<volatile DisplayMode_Type&>(LP
 		}
 	}
 
+	
+	//rtc configuration
+	rtc = new RTC(); rtcS = rtc;
+	RTC_TIME_Type settime;
+	settime.YEAR = 2012;
+	settime.MONTH = 9;
+	settime.DOM = 20;
+	settime.HOUR = 20;
+	settime.MIN = 29;
+	settime.SEC = 0;
+// 	rtc->setTime(&settime);
+
+	const uint32_t randomSeed = uint32_t(rtc->getSecond())
+							  ^ uint32_t(rtc->getMinute())
+							  ^ uint32_t(rtc->getHour());
+	srand(randomSeed);
+
 	ObcBootupText::mode mode;
 	std::string bootupTextMode = config->getValueByNameWithDefault("BootupTextMode", "GitHash");
 	std::string bootupText;
-	std::string customBootupText = config->getValueByNameWithDefault("CustomBootupText", "openOBC");
+	std::string customBootupText = config->getValueByNameWithDefault("CustomBootupText", "Your Text Here");
 	uint bootupDelay = atoi(config->getValueByNameWithDefault("BootupDelay", "800").c_str());
-	if(bootupTextMode == "GitHash")
+	const bool forceChikinhedBootupText = true;
+	if(forceChikinhedBootupText)
+	{
+		mode = ObcBootupText::Custom;
+		bootupText = "Welcome Chikinhed";
+		const int chickenShitWhenSecondIsMod = 10;
+		const bool doChickenShit = 0 == (int(rtc->getSecond()) % chickenShitWhenSecondIsMod);		
+		if (doChickenShit)
+		{
+			const uint chickenShitDelay = bootupDelay * 3 / 2;
+			bootupDelay = chickenShitDelay;
+			bootupText = "What's Up Chickenshit?";
+		}
+	}
+	else if(bootupTextMode == "GitHash")
 	{
 		mode = ObcBootupText::GitHash;
 		bootupText = "openOBC " GIT_VERSION;
@@ -347,17 +380,6 @@ OpenOBC::OpenOBC() : displayMode(reinterpret_cast<volatile DisplayMode_Type&>(LP
 	clockDisplayMode = CLOCKDISPLAY_CLOCK;
 
 	batteryVoltageCalibration = atof(config->getValueByName("BatteryVoltageCalibration").c_str());
-
-	//rtc configuration
-	rtc = new RTC(); rtcS = rtc;
-	RTC_TIME_Type settime;
-	settime.YEAR = 2012;
-	settime.MONTH = 9;
-	settime.DOM = 20;
-	settime.HOUR = 20;
-	settime.MIN = 29;
-	settime.SEC = 0;
-// 	rtc->setTime(&settime);
 
 	//accelerometer configuration
 	Input* accelInterrupt = new Input(ACCEL_INTERRUPT_PORT, ACCEL_INTERRUPT_PIN);
@@ -804,11 +826,11 @@ void OpenOBC::mainloop()
 			{
 				if(clockDisplayMode == CLOCKDISPLAY_CLOCK)
 				{
-					lcd->printfClock("%02i%02i", rtc->getHour(), rtc->getMinute());
+					lcd->printfClock("%02i:%02i", rtc->getHour(), rtc->getMinute());
 				}
 				else if(clockDisplayMode == CLOCKDISPLAY_DATE)
 				{
-					lcd->printfClock("%02i%02i", rtc->getMonth(), rtc->getDay());
+					lcd->printfClock("%02i:%02i", rtc->getMonth(), rtc->getDay());
 				}
 			}
 			

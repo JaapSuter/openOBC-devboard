@@ -1,6 +1,6 @@
 
 ARCH = arm-none-eabi
-PROJECT=$(shell pwd | sed -e 's/.*\///')
+PROJECT=$(shell pwd | sed -e "s/.*\///")
 
 # Tool definitions
 CC      = $(ARCH)-gcc
@@ -39,10 +39,11 @@ INCDIRS += tasks/ObcClock
 INCSTRING = $(patsubst %,-I%,$(INCDIRS)) -I.
 
 # Flags
-CFLAGS = -W -O0 --std=gnu99 -fgnu89-inline
+# -W disabled
+CFLAGS = -O0 --std=gnu99 -fgnu89-inline
 CFLAGS += -mcpu=cortex-m3  -mthumb -mapcs-frame  -D__thumb2__=1  -msoft-float  -gdwarf-2  -mno-sched-prolog
 CFLAGS += -ffunction-sections  -fdata-sections -fno-hosted  -mtune=cortex-m3 -march=armv7-m  -mfix-cortex-m3-ldrd -Wl,-lm
-CFLAGS += -Wall
+# -Disabled CFLAGS += -Wall
 CFLAGS += -Wl,--gc-sections
 CFLAGS += -g
 CFLAGS += -D__RAM_MODE__=0
